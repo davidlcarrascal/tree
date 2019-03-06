@@ -2,9 +2,6 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOINSTALL=$(GOCMD) install
-GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
-GOGET=$(GOCMD) get
 BINARY_NAME=tree
 BINARY_UNIX=$(BINARY_NAME)_unix
 
