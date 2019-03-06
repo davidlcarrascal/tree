@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 func main() {
@@ -20,7 +22,25 @@ func main() {
 	}
 }
 
-func tree(path string) error {
-	fmt.Println(path)
-	return nil
+func tree(root string) error {
+	err := filepath.Walk(root, func(path string, fi os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if fi.Name()[0] == '.' {
+			return filepath.SkipDir
+		}
+
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return fmt.Errorf("Could not rel (%s, %s): %v", root, path, err)
+		}
+		depth := len(strings.Split(rel, string(filepath.Separator)))
+
+		fmt.Printf("%s%s\n", strings.Repeat("  ", depth), fi.Name())
+		// fmt.Println(fi.Name())
+		return nil
+	})
+	return err
 }
