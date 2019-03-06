@@ -1,12 +1,12 @@
 # Tree 🌲
 Tree command from scratch
 
-## To install 
+## Install 
 ```bash
 make build
 make install
 ```
 ## Try 
-```
+```bash
 $GOPATH/bin/tree [dir]
 ```
