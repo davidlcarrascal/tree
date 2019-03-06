@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 func main() {
@@ -15,32 +15,39 @@ func main() {
 	}
 
 	for _, arg := range args {
-		err := tree(arg)
+		err := tree(arg, "")
 		if err != nil {
 			log.Printf("tree %s: %v\n", arg, err)
 		}
 	}
 }
 
-func tree(root string) error {
-	err := filepath.Walk(root, func(path string, fi os.FileInfo, err error) error {
-		if err != nil {
+func tree(root, indent string) error {
+	fi, err := os.Stat(root)
+	if err != nil {
+		return fmt.Errorf("Could not stat %s, %v", root, err)
+	}
+
+	fmt.Printf("%s%s\n", indent, fi.Name())
+	if !fi.IsDir() {
+		return nil
+	}
+
+	fis, err := ioutil.ReadDir(root)
+
+	if err != nil {
+		return fmt.Errorf("Could not read dir %s: %v", root, err)
+	}
+
+	add := "  "
+	for _, fi := range fis {
+		if fi.Name()[0] == '.' {
+			continue
+		}
+		if err := tree(filepath.Join(root, fi.Name()), indent+add); err != nil {
 			return err
 		}
+	}
 
-		if fi.Name()[0] == '.' {
-			return filepath.SkipDir
-		}
-
-		rel, err := filepath.Rel(root, path)
-		if err != nil {
-			return fmt.Errorf("Could not rel (%s, %s): %v", root, path, err)
-		}
-		depth := len(strings.Split(rel, string(filepath.Separator)))
-
-		fmt.Printf("%s%s\n", strings.Repeat("  ", depth), fi.Name())
-		// fmt.Println(fi.Name())
-		return nil
-	})
-	return err
+	return nil
 }

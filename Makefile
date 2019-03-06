@@ -7,6 +7,9 @@ GOGET=$(GOCMD) get
 BINARY_NAME=tree
 BINARY_UNIX=$(BINARY_NAME)_unix
 
+run: 
+	$(GOBUILD) -o $(BINARY_NAME) -v 
+	./$(BINARY_NAME) ../bets/
 build: 
 	$(GOBUILD) -o $(BINARY_NAME) -v
  # Cross compilation
